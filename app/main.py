@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from app.routers import countries, languages, currencies, titles, base, paragraphs
 
+# Start the server
 app = FastAPI()
+
+# Connect all routers (APIs)
 app.include_router(countries.router, prefix='/api/countries', tags=["countries"])
 app.include_router(languages.router, prefix='/api/languages', tags=["languages"])
 app.include_router(currencies.router, prefix='/api/currencies', tags=["currencies"])

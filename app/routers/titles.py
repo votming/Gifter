@@ -17,24 +17,24 @@ router = APIRouter(
 @router.get('/')
 def get_titles(db: Session = Depends(get_db), limit: int = 10, page: int = 1):
     skip = (page - 1) * limit
-    instances_list = DatabaseServices().get_list(db, Title, limit, skip)
+    instances_list = DatabaseServices(db, Title).get_list(limit, skip)
     return {'status': 'success', 'results': len(instances_list), 'titles': instances_list}
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_title(payload: TitleBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().create(db, Title, **payload.dict())
+    instance = DatabaseServices(db, Title).create(**payload.dict())
     return {"status": "success", "title": instance}
 
 
 @router.patch('/{title_id}')
 def update_title(title_id: int, payload: TitleBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().update(db, Title, title_id, **payload.dict(exclude_unset=True))
+    instance = DatabaseServices(db, Title).update(title_id, **payload.dict(exclude_unset=True))
     return {"status": "success", "title": instance}
 
 
 @router.get('/{title_id}')
 def get_title(title_id: int, db: Session = Depends(get_db)):
-    instance = DatabaseServices().get_by_id(db, Title, title_id)
+    instance = DatabaseServices(db, Title).get_by_id(title_id)
     return {"status": "success", "title": instance}
 

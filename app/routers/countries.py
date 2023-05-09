@@ -17,23 +17,23 @@ router = APIRouter(
 @router.get('/')
 def get_countries(db: Session = Depends(get_db), limit: int = 10, page: int = 1):
     skip = (page - 1) * limit
-    instances_list = DatabaseServices().get_list(db, Country, limit, skip)
+    instances_list = DatabaseServices(db, Country).get_list(limit, skip)
     return {'status': 'success', 'results': len(instances_list), 'countries': instances_list}
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_country(payload: CountryBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().create(db, Country, **payload.dict())
+    instance = DatabaseServices(db, Country).create(**payload.dict())
     return {"status": "success", "country": instance}
 
 
 @router.patch('/{country_id}')
 def update_country(country_id: int, payload: CountryBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().update(db, Country, country_id, **payload.dict(exclude_unset=True))
+    instance = DatabaseServices(db, Country).update(country_id, **payload.dict(exclude_unset=True))
     return {"status": "success", "country": instance}
 
 
 @router.get('/{country_id}')
 def get_country(country_id: int, db: Session = Depends(get_db)):
-    instance = DatabaseServices().get_by_id(db, Country, country_id)
+    instance = DatabaseServices(db, Country).get_by_id(country_id)
     return {"status": "success", "country": instance}

@@ -17,24 +17,24 @@ router = APIRouter(
 @router.get('/')
 def get_paragraphs(db: Session = Depends(get_db), limit: int = 10, page: int = 1):
     skip = (page - 1) * limit
-    instances_list = DatabaseServices().get_list(db, Paragraph, limit, skip)
+    instances_list = DatabaseServices(db, Paragraph).get_list(limit, skip)
     return {'status': 'success', 'results': len(instances_list), 'paragraphs': instances_list}
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_paragraph(payload: ParagraphBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().create(db, Paragraph, **payload.dict())
+    instance = DatabaseServices(db, Paragraph).create(**payload.dict())
     return {"status": "success", "paragraph": instance}
 
 
 @router.patch('/{paragraph_id}')
 def update_paragraph(paragraph_id: int, payload: ParagraphBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().update(db, Paragraph, paragraph_id, **payload.dict(exclude_unset=True))
+    instance = DatabaseServices(db, Paragraph).update(paragraph_id, **payload.dict(exclude_unset=True))
     return {"status": "success", "paragraph": instance}
 
 
 @router.get('/{paragraph_id}')
 def get_paragraph(paragraph_id: int, db: Session = Depends(get_db)):
-    instance = DatabaseServices().get_by_id(db, Paragraph, paragraph_id)
+    instance = DatabaseServices(db, Paragraph).get_by_id(paragraph_id)
     return {"status": "success", "paragraph": instance}
 

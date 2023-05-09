@@ -1,5 +1,3 @@
-from datetime import datetime
-from typing import List
 from pydantic import BaseModel, Field
 
 
@@ -51,12 +49,6 @@ class CountryBaseSchema(BaseModel):
         arbitrary_types_allowed = True
 
 
-class ListCountryResponse(BaseModel):
-    status: str
-    results: int
-    notes: List[CountryBaseSchema]
-
-
 class LanguageBaseSchema(BaseModel):
     id: int
     name: str
@@ -65,9 +57,3 @@ class LanguageBaseSchema(BaseModel):
         orm_mode = True
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
-
-
-class ListLanguageResponse(BaseModel):
-    status: str
-    results: int
-    notes: List[LanguageBaseSchema]

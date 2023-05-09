@@ -17,23 +17,23 @@ router = APIRouter(
 @router.get('/')
 def get_currencies(db: Session = Depends(get_db), limit: int = 10, page: int = 1):
     skip = (page - 1) * limit
-    instances_list = DatabaseServices().get_list(db, Currency, limit, skip)
+    instances_list = DatabaseServices(db, Currency).get_list(limit, skip)
     return {'status': 'success', 'results': len(instances_list), 'currencies': instances_list}
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_currency(payload: CurrencyBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().create(db, Currency, **payload.dict())
+    instance = DatabaseServices(db, Currency).create(**payload.dict())
     return {"status": "success", "currency": instance}
 
 
 @router.patch('/{currency_id}')
 def update_currency(currency_id: int, payload: CurrencyBaseSchema, db: Session = Depends(get_db)):
-    instance = DatabaseServices().update(db, Currency, currency_id, **payload.dict(exclude_unset=True))
+    instance = DatabaseServices(db, Currency).update(currency_id, **payload.dict(exclude_unset=True))
     return {"status": "success", "currency": instance}
 
 
 @router.get('/{currency_id}')
 def get_currency(currency_id: int, db: Session = Depends(get_db)):
-    instance = DatabaseServices().get_by_id(db, Currency, currency_id)
+    instance = DatabaseServices(db, Currency).get_by_id(currency_id)
     return {"status": "success", "currency": instance}

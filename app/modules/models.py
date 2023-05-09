@@ -1,11 +1,11 @@
 from sqlalchemy import ForeignKey, Column, String, Integer, Text, SmallInteger
 from sqlalchemy.orm import relationship
 
-from app.utils.mixins import BaseDBOperationsMixin
+from app.utils.mixins import DBOperationsMixin
 from app.modules.database import Base
 
 
-class Currency(BaseDBOperationsMixin, Base):
+class Currency(DBOperationsMixin, Base):
     __tablename__ = 'currencies'
 
     id = Column("id", Integer, primary_key=True)
@@ -21,7 +21,7 @@ class Currency(BaseDBOperationsMixin, Base):
         self.symbol = symbol
 
 
-class Country(BaseDBOperationsMixin, Base):
+class Country(DBOperationsMixin, Base):
     __tablename__ = 'countries'
 
     id = Column("id", Integer, primary_key=True)
@@ -41,7 +41,8 @@ class Country(BaseDBOperationsMixin, Base):
         self.bank_name = bank_name
         self.currency_id = currency_id
 
-class Language(BaseDBOperationsMixin, Base):
+
+class Language(DBOperationsMixin, Base):
     __tablename__ = 'languages'
 
     id = Column("id", Integer, primary_key=True)
@@ -53,7 +54,7 @@ class Language(BaseDBOperationsMixin, Base):
         self.code = code
 
 
-class Title(BaseDBOperationsMixin, Base):
+class Title(DBOperationsMixin, Base):
     __tablename__ = 'titles'
 
     id = Column("id", Integer, primary_key=True)
@@ -71,7 +72,7 @@ class Title(BaseDBOperationsMixin, Base):
         self.country_id = country_id
 
 
-class Paragraph(BaseDBOperationsMixin, Base):
+class Paragraph(DBOperationsMixin, Base):
     __tablename__ = 'paragraphs'
 
     id = Column("id", Integer, primary_key=True)
