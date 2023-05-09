@@ -24,8 +24,9 @@ Gifter is developed using the following technologies and frameworks:
 To install and set up Gifter on your local machine, follow these steps:
 
 1. Clone the project repository to your local machine.
-2. Build the project locally using Docker Compose: `docker-compose build`
-3. Start the project: `docker-compose up -d`
+2. Create .env file in the root folder and define the `DB_CONNECT_PATH` variable (for testing set it to `sqlite:///database.db`)
+3. Build the project locally using Docker Compose: `docker-compose build`
+4. Start the project: `docker-compose up -d`
 
 ## Usage
 
