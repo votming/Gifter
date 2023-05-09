@@ -3,11 +3,11 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
 
-from modules.models import Paragraph
-from modules.schemas import ParagraphBaseSchema
-from services.db import DatabaseServices
+from app.modules.models import Paragraph
+from app.modules.schemas import ParagraphBaseSchema
+from app.services.db import DatabaseServices
 
-from modules.database import get_db
+from app.modules.database import get_db
 
 router = APIRouter(
     responses={404: {"description": "Not found"}},

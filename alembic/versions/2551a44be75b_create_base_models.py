@@ -9,12 +9,12 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import func
 
-from modules.database import session
-from modules.models import Country
-from modules.models import Currency
-from modules.models import Language
-from modules.models import Paragraph
-from modules.models import Title
+from app.modules.database import session
+from app.modules.models import Country
+from app.modules.models import Currency
+from app.modules.models import Language
+from app.modules.models import Paragraph
+from app.modules.models import Title
 
 # revision identifiers, used by Alembic.
 revision = '2551a44be75b'

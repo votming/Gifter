@@ -5,13 +5,13 @@ from fastapi import Depends
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
-from modules.models import Country
-from modules.models import Currency
-from modules.models import Language
-from modules.models import Paragraph
-from modules.models import Title
+from app.modules.models import Country
+from app.modules.models import Currency
+from app.modules.models import Language
+from app.modules.models import Paragraph
+from app.modules.models import Title
 
-from modules.database import get_db
+from app.modules.database import get_db
 
 router = APIRouter(
     responses={404: {"description": "Not found"}},

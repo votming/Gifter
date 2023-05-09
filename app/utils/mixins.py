@@ -1,4 +1,4 @@
-from modules.database import session
+from app.modules.database import session
 
 
 class BaseDBOperationsMixin:

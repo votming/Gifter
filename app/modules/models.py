@@ -1,8 +1,8 @@
 from sqlalchemy import ForeignKey, Column, String, Integer, Text, SmallInteger
 from sqlalchemy.orm import relationship
 
-from utils.mixins import BaseDBOperationsMixin
-from modules.database import Base
+from app.utils.mixins import BaseDBOperationsMixin
+from app.modules.database import Base
 
 
 class Currency(BaseDBOperationsMixin, Base):
