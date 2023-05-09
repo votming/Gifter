@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi import APIRouter
 from routers import countries, languages, currencies, titles, base, paragraphs
 
 app = FastAPI()
