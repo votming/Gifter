@@ -79,7 +79,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(('language_id',), ['languages.id'], ),
         sa.ForeignKeyConstraint(('country_id',), ['countries.id'], ),
     )
-    languages = [{"name": 'English', 'code': "en"}, {'name':'Spanish', 'code': "es"}]
+    languages = [{"name": 'English', 'code': "en"}, {'name': 'Spanish', 'code': "es"}]
     for language in languages:
         instance = Language(**language)
         session.add(instance)
@@ -89,27 +89,27 @@ def upgrade() -> None:
         instance = Currency(**currency)
         session.add(instance)
     session.commit()
-    countries = [{'name': 'United States', 'code': 'us', 'currency_id': 1, 'bank_name': 'US Bank'}, {'name': 'United Kingdom', 'code': 'gb','currency_id':3, 'bank_name': 'UK Bank'}, {'name': 'Estonia', 'code': 'en','currency_id':1, 'bank_name': 'Estonian  Bank'}]
+    countries = [{'name': 'United States', 'code': 'US', 'currency_id': 1, 'bank_name': 'US Bank'}, {'name': 'United Kingdom', 'code': 'GB', 'currency_id': 3, 'bank_name': 'UK Bank'}, {'name': 'Estonia', 'code': 'EN', 'currency_id': 1, 'bank_name': 'Estonian  Bank'}]
     for country in countries:
         instance = Country(**country)
         session.add(instance)
     session.commit()
     titles = [
-        {'template': "{offer_hero}’s latest investment has experts in awe and big banks terrified", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "Special report: {offer_hero}’s Latest Investment Has Experts in Awe And Big Banks Terrified", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "{offer_hero}'s investments impress experts and scare the minds of big banks", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "{offer_hero} invests $12 million in new trading platform – releases to public, making ordinary people wealthy", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "{offer_hero} reveals 'the rich society' secret: technology allowing everyone to earn millions", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "{offer_hero} shocked everyone in the studio by revealing how he is making an extra £128K every month", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "{offer_hero} shocked everyone in the studio by revealing how he is making an extra $128K every month", 'gender': None, 'language_id': 1, 'country_id': 2},
-        {'template': "{offer_hero}, Banks #1 wanted person, shared secret information on how to make a fortune", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "{offer_hero} accidentally revealed this top secret about a loophole that will make any {country_demonym_capitalized} rich", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "The gift of billionaire philanthropist {offer_hero} has secured the future of common people", 'gender': None, 'language_id': 1, 'country_id': None},
-        {'template': "Bank of England sues {offer_hero} for what he said on live TV", 'gender': 'male', 'language_id': 1, 'country_id': 2},
-        {'template': "Bank of England sues {offer_hero} for what she said on live TV", 'gender': 'female', 'language_id': 1, 'country_id': 2},
-        {'template': "{offer_name} steals a march on everyone by making even more money after his new fiance revealed this new method of making money", 'gender': 'male', 'language_id': 1, 'country_id': 3},
-        {'template': "{offer_name} is being sued by the Bank of England for comments he made on live broadcast", 'gender': 'male', 'language_id': 1, 'country_id': 2},
-        {'template': "{offer_hero} shocked everyone in the studio by revealing how he is making an extra {currency_symbol}128K every month", 'gender': 'male', 'language_id': 1, 'country_id': 2},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero}’s latest investment has experts in awe and big banks terrified"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "Special report: {offer_hero}’s Latest Investment Has Experts in Awe And Big Banks Terrified"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero}'s investments impress experts and scare the minds of big banks"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero} invests $12 million in new trading platform – releases to public, making ordinary people wealthy"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero} reveals 'the rich society' secret: technology allowing everyone to earn millions"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero} shocked everyone in the studio by revealing how he is making an extra £128K every month"},
+        {'gender': None, 'language_id': 1, 'country_id': 2, 'template': "{offer_hero} shocked everyone in the studio by revealing how he is making an extra $128K every month"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero}, Banks #1 wanted person, shared secret information on how to make a fortune"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero} accidentally revealed this top secret about a loophole that will make any {country_demonym_capitalized} rich"},
+        {'gender': None, 'language_id': 1, 'country_id': None, 'template': "The gift of billionaire philanthropist {offer_hero} has secured the future of common people"},
+        {'gender': 'male', 'language_id': 1, 'country_id': 2, 'template': "Bank of England sues {offer_hero} for what he said on live TV"},
+        {'gender': 'female', 'language_id': 1, 'country_id': 2, 'template': "Bank of England sues {offer_hero} for what she said on live TV"},
+        {'gender': 'male', 'language_id': 1, 'country_id': 3, 'template': "{offer_name} steals a march on everyone by making even more money after his new fiance revealed this new method of making money"},
+        {'gender': 'male', 'language_id': 1, 'country_id': 2, 'template': "{offer_name} is being sued by the Bank of England for comments he made on live broadcast"},
+        {'gender': 'male', 'language_id': 1, 'country_id': 2, 'template': "{offer_hero} shocked everyone in the studio by revealing how he is making an extra {currency_symbol}128K every month"},
     ]
     for title in titles:
         instance = Title(**title)
@@ -128,7 +128,8 @@ We were able to persuade the director of ""{tv_show_name}"" to provide us with a
 
 
 def downgrade() -> None:
+    op.drop_table('paragraphs')
     op.drop_table('titles')
+    op.drop_table('countries')
     op.drop_table('languages')
     op.drop_table('currencies')
-    op.drop_table('countries')
