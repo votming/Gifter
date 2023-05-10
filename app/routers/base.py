@@ -53,20 +53,21 @@ def get_title(
         demonym = title.country.demonym if title.country is not None else 'people'
         text = title.template.format(offer_name=offer_name, offer_hero=offer_name, country_demonym_capitalized=demonym, currency_symbol=currency.symbol)#{**title.__dict__, **title.country.__dict__, **title.language.__dict__})
         response['title'] = text
+
+        paragraph_query = db.query(Paragraph)
         if paragraphs:
-            paragraph_query = db.query(Paragraph)
-            if paragraphs:
-                paragraph_query = paragraph_query.filter(Paragraph.id.in_(json.loads(paragraphs)))
-            if country:
-                paragraph_query = paragraph_query.join(Country, isouter=True).filter(or_(Country.code == country, Paragraph.country_id == None))
-            if language:
-                paragraph_query = paragraph_query.join(Language, isouter=True).filter(or_(Language.code == language, Paragraph.language_id==None))
-            paragraph = paragraph_query.order_by(func.random()).first()
-            if paragraph is not None:
-                print(paragraph.country)
-                bank_name = paragraph.country.bank_name if paragraph.country is not None else 'Bank'
-                text = paragraph.template.format(offer_name=offer_name,offer_hero=offer_name, tv_show_name=tv_show, currency_symbol=currency.symbol, CENTRAL_BANK=bank_name, central_bank=bank_name, offer_hero_first_name=offer_hero_first_name,offer_hero_second_name=offer_hero_second_name)
-                response['paragraph'] = text
+            paragraph_query = paragraph_query.filter(Paragraph.id.in_(json.loads(paragraphs)))
+        if country:
+            paragraph_query = paragraph_query.join(Country, isouter=True).filter(or_(Country.code == country, Paragraph.country_id == None))
+        if language:
+            paragraph_query = paragraph_query.join(Language, isouter=True).filter(or_(Language.code == language, Paragraph.language_id==None))
+        paragraph = paragraph_query.order_by(func.random()).first()
+        if paragraph is not None:
+            print(paragraph.country)
+            bank_name = paragraph.country.bank_name if paragraph.country is not None else 'Bank'
+            text = paragraph.template.format(offer_name=offer_name,offer_hero=offer_name, tv_show_name=tv_show, currency_symbol=currency.symbol, CENTRAL_BANK=bank_name, central_bank=bank_name, offer_hero_first_name=offer_hero_first_name,offer_hero_second_name=offer_hero_second_name)
+            response['paragraph'] = text
+
         return response
     except Exception as ex:
         return str(ex)
