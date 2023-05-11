@@ -39,6 +39,7 @@ class CurrencyBaseSchema(BaseModel):
 class CountryBaseSchema(BaseModel):
     name: str
     code: str = Field(max_length=2)
+    currency_id: int
     demonym: str
     demonym_plural: str
     bank_name: str
