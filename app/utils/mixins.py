@@ -81,4 +81,6 @@ class DBOperationsMixin:
         Returns:
             str: A string representation of the instance.
         """
-        return f'<{self.__class__.__name__}: {self.__class__.__name__} object ({self.id})>'
+        name = getattr(self, 'name_en', None) or getattr(self, 'name', None) or getattr(self, 'title', None) or \
+               getattr(self, 'login', None) or getattr(self, 'id')
+        return f'[{self.__class__.__name__}: {name}]'

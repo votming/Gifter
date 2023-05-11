@@ -1,8 +1,38 @@
-from sqlalchemy import ForeignKey, Column, String, Integer, Text, SmallInteger
+from sqlalchemy import ForeignKey, Column, String, Integer, Text, SmallInteger, DateTime
+from sqlalchemy import func
 from sqlalchemy.orm import relationship
 
 from app.utils.mixins import DBOperationsMixin
 from app.modules.database import Base
+
+
+class Role(DBOperationsMixin, Base):
+    __tablename__ = 'user_roles'
+
+    id = Column("id", Integer, primary_key=True)
+    name = Column('name', String(120))
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
+
+    def __init__(self, name='none'):
+        self.name = name
+
+
+class User(DBOperationsMixin, Base):
+    __tablename__ = 'users'
+
+    id = Column("id", Integer, primary_key=True)
+    login = Column('login', String)
+    password = Column('password', String)
+    role_id = Column('role_id', Integer, ForeignKey("user_roles.id"))
+    role = relationship("Role", backref="users")
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
+
+    def __init__(self, login='default', password=None, role_id=None):
+        self.login = login
+        self.password = password
+        self.role_id = role_id
 
 
 class Currency(DBOperationsMixin, Base):
@@ -13,8 +43,10 @@ class Currency(DBOperationsMixin, Base):
     name_en = Column('name_en', String)
     code = Column('code', String(5))
     symbol = Column('symbol', String(5))
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, name, name_en, code, symbol):
+    def __init__(self, name='default', name_en='default', code=None, symbol=None):
         self.name = name
         self.name_en = name_en
         self.code = code
@@ -32,8 +64,10 @@ class Country(DBOperationsMixin, Base):
     bank_name = Column('bank_name', String)
     currency_id = Column('currency_id', Integer, ForeignKey("currencies.id"))
     currency = relationship("Currency", backref="countries")
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, name, code, demonym='', demonym_plural='', bank_name='', currency_id=None):
+    def __init__(self, name='', code='__', demonym='', demonym_plural='', bank_name='', currency_id=None):
         self.name = name
         self.code = code
         self.demonym = demonym
@@ -48,8 +82,10 @@ class Language(DBOperationsMixin, Base):
     id = Column("id", Integer, primary_key=True)
     name = Column('name', String)
     code = Column('code', String(3))
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, name, code):
+    def __init__(self, name='default', code=None):
         self.name = name
         self.code = code
 
@@ -64,8 +100,10 @@ class Title(DBOperationsMixin, Base):
     country_id = Column('country_id', Integer, ForeignKey("countries.id"), nullable=True)
     language = relationship("Language", backref="titles")
     country = relationship("Country", backref="titles")
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, template, language_id, country_id, gender=True):
+    def __init__(self, template='none', language_id=None, country_id=None, gender=True):
         self.template = template
         self.gender = gender
         self.language_id = language_id
@@ -82,8 +120,10 @@ class Paragraph(DBOperationsMixin, Base):
     country_id = Column('country_id', Integer, ForeignKey("countries.id"), nullable=True)
     language = relationship("Language", backref="paragraphs")
     country = relationship("Country", backref="paragraphs")
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, template, language_id, country_id=None, number=1):
+    def __init__(self, template='none', language_id=None, country_id=None, number=1):
         self.template = template
         self.number = number
         self.language_id = language_id

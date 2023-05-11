@@ -5,6 +5,8 @@ Revises:
 Create Date: 2023-05-09 14:34:30.671555
 
 """
+import os
+
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import func
@@ -14,7 +16,9 @@ from app.modules.models import Country
 from app.modules.models import Currency
 from app.modules.models import Language
 from app.modules.models import Paragraph
+from app.modules.models import Role
 from app.modules.models import Title
+from app.modules.models import User
 
 # revision identifiers, used by Alembic.
 revision = '2551a44be75b'
@@ -23,7 +27,30 @@ branch_labels = None
 depends_on = None
 
 
+def create_objects(objects, model):
+    for data in objects:
+        instance = model(**data)
+        session.add(instance)
+    session.commit()
+
 def upgrade() -> None:
+    op.create_table(
+        'user_roles',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('name', sa.String(120)),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+        sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now())
+    )
+    op.create_table(
+        'users',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('login', sa.String(120)),
+        sa.Column('password', sa.String(120)),
+        sa.Column('role_id', sa.Integer, nullable=False),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+        sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now()),
+        sa.ForeignKeyConstraint(('role_id',), ['user_roles.id'], ),
+    )
     op.create_table(
         'currencies',
         sa.Column('id', sa.Integer, primary_key=True),
@@ -79,21 +106,26 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(('language_id',), ['languages.id'], ),
         sa.ForeignKeyConstraint(('country_id',), ['countries.id'], ),
     )
+    roles = [{'name': 'admin'}, {'name': 'user'}]
+    create_objects(roles, Role)
+    chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    admin_pass = "".join(chars[c % len(chars)] for c in os.urandom(12))
+    print(f'Admin pass: {admin_pass}')
+    user_pass = "".join(chars[c % len(chars)] for c in os.urandom(12))
+    print(f'User pass: {user_pass}')
+    users = [
+        {'login': 'admin', 'password': admin_pass, 'role_id': 1},
+        {'login': 'kislolord', 'password': "".join(chars[c % len(chars)] for c in os.urandom(12)), 'role_id': 1},
+        {'login': 'votming', 'password': "".join(chars[c % len(chars)] for c in os.urandom(12)), 'role_id': 1},
+        {'login': 'test_user', 'password': user_pass, 'role_id': 2}
+    ]
+    create_objects(users, User)
     languages = [{"name": 'English', 'code': "en"}, {'name': 'Spanish', 'code': "es"}]
-    for language in languages:
-        instance = Language(**language)
-        session.add(instance)
-    session.commit()
+    create_objects(languages, Language)
     currencies = [{'name': 'US Dollars', 'name_en': 'US Dollars', 'code': 'usd', 'symbol': '$'}, {'name': 'Euro', 'name_en': 'Euro', 'code': 'eur', 'symbol': '€'}, {'name': 'Pound sterling', 'name_en': 'Pound sterling', 'code': 'gbp', 'symbol': '£'}]
-    for currency in currencies:
-        instance = Currency(**currency)
-        session.add(instance)
-    session.commit()
+    create_objects(currencies, Currency)
     countries = [{'name': 'United States', 'code': 'US', 'currency_id': 1, 'bank_name': 'US Bank'}, {'name': 'United Kingdom', 'code': 'GB', 'currency_id': 3, 'bank_name': 'UK Bank'}, {'name': 'Estonia', 'code': 'EN', 'currency_id': 1, 'bank_name': 'Estonian  Bank'}]
-    for country in countries:
-        instance = Country(**country)
-        session.add(instance)
-    session.commit()
+    create_objects(countries, Country)
     titles = [
         {'gender': None, 'language_id': 1, 'country_id': None, 'template': "{offer_hero}’s latest investment has experts in awe and big banks terrified"},
         {'gender': None, 'language_id': 1, 'country_id': None, 'template': "Special report: {offer_hero}’s Latest Investment Has Experts in Awe And Big Banks Terrified"},
@@ -111,20 +143,14 @@ def upgrade() -> None:
         {'gender': 'male', 'language_id': 1, 'country_id': 2, 'template': "{offer_name} is being sued by the Bank of England for comments he made on live broadcast"},
         {'gender': 'male', 'language_id': 1, 'country_id': 2, 'template': "{offer_hero} shocked everyone in the studio by revealing how he is making an extra {currency_symbol}128K every month"},
     ]
-    for title in titles:
-        instance = Title(**title)
-        session.add(instance)
-    session.commit()
+    create_objects(titles, Title)
     paragraphs = [
         {'template': """The scandal erupted during a live broadcast when {offer_hero} accidentally revealed his secret on the program. Many viewers paid attention to {offer_hero_first_name}'s "accidental" words and began to send messages to the airwaves. However, the program was interrupted by a call from the {CENTRAL_BANK}, who demanded that the program be stopped immediately. """, 'language_id': 1, 'country_id': 1},
         {'template': """"The shocking truth was revealed on air, and {offer_hero} regretted it. However, it was too late.
 The scandal erupted when {offer_hero_first_name} accidentally revealed her secret during a live broadcast. {offer_hero_first_name}'s ""accidental"" words captured the attention of many viewers, who began sending messages. As a result, the program was interrupted by the {central_bank}, which demanded that the program be halted immediately.
 We were able to persuade the director of ""{tv_show_name}"" to provide us with a copy of the recording of this program. Keep in mind that this article, like the broadcast, may soon be deleted. In light of this, we would recommend you check out the link provided to us by {offer_hero} herself, if you happen to read this article. """, 'language_id': 1, 'country_id': None},
     ]
-    for paragraph in paragraphs:
-        instance = Paragraph(**paragraph)
-        session.add(instance)
-    session.commit()
+    create_objects(paragraphs, Paragraph)
 
 
 def downgrade() -> None:

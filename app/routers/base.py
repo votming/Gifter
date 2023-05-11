@@ -58,7 +58,7 @@ def get_title(
 
         if paragraphs is not None:
             paragraph_query = db.query(Paragraph)
-            if paragraphs!= 'any':
+            if paragraphs != 'any':
                 paragraph_query = paragraph_query.filter(Paragraph.id.in_(json.loads(paragraphs)))
             if country:
                 paragraph_query = paragraph_query.join(Country, isouter=True).filter(or_(Country.code == country, Paragraph.country_id == None))
