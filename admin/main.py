@@ -1,5 +1,6 @@
 from admin.views.countries import CountryView
 from admin.views.currencies import CurrencyView
+from admin.views.language import LanguageView
 from admin.views.paragraphs import ParagraphView
 from admin.views.roles import RoleView
 from admin.views.titles import TitleView
@@ -46,6 +47,7 @@ def mount_admin_routes(app):
     authentication_backend = AdminAuth(secret_key="somekey")
     admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend)
     admin.add_view(CountryView)
+    admin.add_view(LanguageView)
     admin.add_view(CurrencyView)
     admin.add_view(TitleView)
     admin.add_view(ParagraphView)
