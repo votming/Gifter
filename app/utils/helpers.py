@@ -39,7 +39,7 @@ def gather_template_variables(money_values: dict, macros: dict, language: Langua
             if value > 100:
                 rounded = int(str(value)[:2]) + 1
                 value = int(str(rounded) + '0' * (len(str(value)) - 2))
-            money_values[key] = value
+            money_values[key] = f'{value:,}'.replace(',', currency.divider or '')
     localizations = dict()
     if language and country:
         localizations = {obj.variable: obj.value for obj in next(get_db()).query(Localization).filter(Localization.language_id == language.id, Localization.country_id == country.id).all()}
