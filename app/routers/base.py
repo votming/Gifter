@@ -1,4 +1,6 @@
 import json
+import re
+import traceback
 
 from fastapi import APIRouter
 from fastapi import Depends
@@ -48,40 +50,58 @@ def get_title(
         #offer_name = f'{offer_hero_first_name} {offer_hero_second_name}'
         country_code = country
         if country_code is not None:
-            country = Country.filter(**{Country.code: country_code})
+            country = Country.filter(code=country_code)
         currency_code = currency
         if currency_code is not None:
-            currency = Currency.filter(**{Currency.code: currency_code})
+            print(currency_code)
+            currency = Currency.filter(code=currency_code)
         language_code = language
         if language_code is not None:
-            language = Language.filter(**{Language.code: language_code})
+            language = Language.filter(code=language_code)
 
         if titles is not None:
             title: Title = generate(db, Title, titles, country_code, language_code, gender)
+            template = title.template
             if title is not None:
-                #if currency is not None:
-                #    currency = db.query(Currency).filter(Currency.code == currency_code).first()
+                template, money_values = parse_money_values(template)
                 if currency is None and title.country is not None and title.country.currency is not None:
                     currency = title.country.currency
-                else:
-                    currency = db.query(Currency).get(1)
                 demonym = title.country.demonym if title.country is not None else 'people'
-                params = gather_template_variables(macros=macros, offer_name=offer_name, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name, country_demonym_capitalized=demonym, currency=currency, languag=language, country=country)
-                text = title.template.format(**params)
+                params = gather_template_variables(money_values=money_values, macros=macros, offer_name=offer_name, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name, country_demonym_capitalized=demonym, currency=currency, languag=language, country=country)
+                print(template)
+                print(params)
+                text = template.format(**params)
                 response['title'] = text
 
         if paragraphs is not None:
             paragraph: Paragraph = generate(db, Paragraph, titles, country_code, language_code)
+            template = paragraph.template
             if paragraph is not None:
+                template, money_values = parse_money_values(template)
                 bank_name = paragraph.country.bank_name if paragraph.country is not None else 'Bank'
-                params = gather_template_variables(macros=macros, bank_name=bank_name, tv_show_name=tv_show, currency=currency, languag=language, country=country, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name)
-                text = paragraph.template.format(**params)
+                params = gather_template_variables(money_values=money_values, macros=macros, bank_name=bank_name, tv_show_name=tv_show, currency=currency, languag=language, country=country, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name)
+                text = template.format(**params)
                 response['paragraph'] = text
 
         return response
     except Exception as ex:
-        return str(ex)
+        tb = traceback.format_exc()
+        return {
+            'error': str(ex),
+            'traceback': tb
+        }
 
+
+def parse_money_values(template:str):
+    money_placeholders = set(re.findall('{\d+}', template))
+    money_values = dict()
+    i = 1
+    for value in money_placeholders:
+        new_placeholder = f'money_value_{i}'
+        template = template.replace(value, '{'+new_placeholder+'}')
+        money_values[new_placeholder] = int(value.replace('{', '').replace('}', ''))
+        i += 1
+    return template, money_values
 
 def generate(db, model, ids, country, language, gender=None):
     query = db.query(model)

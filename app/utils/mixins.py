@@ -26,12 +26,11 @@ class DBOperationsMixin:
     @classmethod
     def filter(cls, **filters):
         query = session.query(cls)
-        for key, value in filters.items():
-            query = query.filter(key == value)
+        query = query.filter_by(**filters)
         instance = query.first()
         if instance:
             return instance
-        raise exc.NoResultFound(f'{cls} not found')
+        raise exc.NoResultFound(f'Instance of the class {cls.__name__} not found')
 
     @classmethod
     def create(cls, **kwargs):

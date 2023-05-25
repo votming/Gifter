@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, String, Integer, Text, SmallInteger, DateTime
+from sqlalchemy import ForeignKey, Column, String, Integer, Text, SmallInteger, DateTime, Float
 from sqlalchemy import func
 from sqlalchemy.orm import relationship
 
@@ -45,15 +45,19 @@ class Currency(DBOperationsMixin, Base):
     min_dep_amount = Column('min_dep_amount', String)
     code = Column('code', String(5))
     symbol = Column('symbol', String(5))
+    divider = Column('divider', String(3), default='')
+    exchange_rate = Column('exchange_rate', Float, default=1)
     created_at = Column(DateTime(timezone=False), server_default=func.now())
     updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, name='default', name_plural='default', official_name='default', code=None, symbol=None, min_dep_amount=None):
+    def __init__(self, name='default', name_plural='default', official_name='default', code=None, symbol=None, min_dep_amount=None, divider='', exchange_rate=1):
         self.official_name = official_name
         self.name = name
         self.name_plural = name_plural
         self.code = code
         self.symbol = symbol
+        self.divider = divider
+        self.exchange_rate = exchange_rate
         self.min_dep_amount = min_dep_amount or '0'
 
 
