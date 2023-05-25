@@ -1,0 +1,38 @@
+from app.modules.database import get_db
+from app.modules.models import Country
+from app.modules.models import Currency
+from app.modules.models import Language
+from app.modules.models import Localization
+
+
+def gather_template_variables(macros: dict, language: Language = None, country: Country = None, currency: Currency = None, **kwargs):
+    first_name = kwargs.get('offer_hero_first_name', None)
+    second_name = kwargs.get('offer_hero_second_name', None)
+    offer_name = kwargs.get('offer_name', None)
+    if offer_name is None and first_name is not None and second_name is not None:
+        kwargs['offer_name'] = f'{first_name} {second_name}'
+        kwargs['offer_hero'] = f'{first_name} {second_name}'
+    demonym = kwargs.get('demonym', None) or (country.demonym if country else None)
+    demonym_plural = kwargs.get('demonym_plural', None) or (country.demonym_plural if country else None)
+    params = {
+        'offer_name': kwargs.get('offer_name', None),
+        'offer_hero': kwargs.get('offer_hero', None),
+        'tv_show_name': kwargs.get('tv_show_name', None),
+        'currency_symbol': currency.symbol if currency is not None else None,
+        'central_bank': kwargs.get('bank_name', None) or (country.bank_name if country is not None else None),
+        'offer_hero_first_name': kwargs.get('offer_hero_first_name', None),
+        'offer_hero_second_name': kwargs.get('offer_hero_second_name', None),
+        'country_demonym_capitalized': demonym.capitalize() if demonym else None,
+        'country_demonym_plural_capitalized': demonym_plural.capitalize() if demonym_plural else None,
+        'demonym': demonym,
+        'demonym_plural': demonym_plural,
+        'currency_official_name': kwargs.get('currency_official_name', None) or (currency.official_name if currency is not None else 'US Dollar'),
+        'currency_name_capitalized': (kwargs.get('currency_name', None) or (currency.name if currency is not None else 'dollar')).capitalize(),
+        'currency_name': kwargs.get('currency_name', None) or (currency.name if currency is not None else 'dollar'),
+        'currency_name_plural': kwargs.get('currency_name_plural', None) or (currency.name_plural if currency is not None else 'dollars'),
+        'min_dep_amount': kwargs.get('min_dep_amount', None) or (currency.min_dep_amount if currency is not None else '0 usd')
+    }
+    localizations = dict()
+    if language and country:
+        localizations = {obj.variable: obj.value for obj in next(get_db()).query(Localization).filter(Localization.language_id == language.id, Localization.country_id == country.id).all()}
+    return params | localizations | macros  # {**params, **raw_data}

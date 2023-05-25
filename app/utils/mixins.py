@@ -24,6 +24,16 @@ class DBOperationsMixin:
         raise exc.NoResultFound(f'{cls} not found')
 
     @classmethod
+    def filter(cls, **filters):
+        query = session.query(cls)
+        for key, value in filters.items():
+            query = query.filter(key == value)
+        instance = query.first()
+        if instance:
+            return instance
+        raise exc.NoResultFound(f'{cls} not found')
+
+    @classmethod
     def create(cls, **kwargs):
         """Create a new database instance.
 

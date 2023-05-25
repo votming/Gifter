@@ -39,18 +39,22 @@ class Currency(DBOperationsMixin, Base):
     __tablename__ = 'currencies'
 
     id = Column("id", Integer, primary_key=True)
+    official_name = Column('official_name', String)
     name = Column('name', String)
-    name_en = Column('name_en', String)
+    name_plural = Column('name_plural', String)
+    min_dep_amount = Column('min_dep_amount', String)
     code = Column('code', String(5))
     symbol = Column('symbol', String(5))
     created_at = Column(DateTime(timezone=False), server_default=func.now())
     updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, name='default', name_en='default', code=None, symbol=None):
+    def __init__(self, name='default', name_plural='default', official_name='default', code=None, symbol=None, min_dep_amount=None):
+        self.official_name = official_name
         self.name = name
-        self.name_en = name_en
+        self.name_plural = name_plural
         self.code = code
         self.symbol = symbol
+        self.min_dep_amount = min_dep_amount or '0'
 
 
 class Country(DBOperationsMixin, Base):
@@ -128,3 +132,23 @@ class Paragraph(DBOperationsMixin, Base):
         self.number = number
         self.language_id = language_id
         self.country_id = country_id
+
+
+class Localization(DBOperationsMixin, Base):
+    __tablename__ = 'localizations'
+
+    id = Column("id", Integer, primary_key=True)
+    language_id = Column('language_id', Integer, ForeignKey("languages.id"))
+    country_id = Column('country_id', Integer, ForeignKey("countries.id"))
+    variable = Column('variable', String(100))
+    value = Column('value', String(200))
+    language = relationship("Language", backref="localizations")
+    country = relationship("Country", backref="localizations")
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
+    updated_at = Column(DateTime(timezone=False), onupdate=func.now())
+
+    def __init__(self, language_id, country_id, variable, value):
+        self.language_id = language_id
+        self.country_id = country_id
+        self.variable = variable
+        self.value = value
