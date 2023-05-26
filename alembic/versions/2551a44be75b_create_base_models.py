@@ -60,6 +60,7 @@ def upgrade() -> None:
         sa.Column('code', sa.String(5)),
         sa.Column('symbol', sa.String(5)),
         sa.Column('min_dep_amount', sa.String(120)),
+        sa.Column('exchange_rate', sa.Integer, default=1),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
         sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now())
     )
@@ -68,6 +69,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('name', sa.String(100), nullable=False),
         sa.Column('code', sa.String(2), nullable=False),
+        sa.Column('divider', sa.String(3), default=''),
         sa.Column('demonym', sa.String(100), nullable=False),
         sa.Column('demonym_plural', sa.String(100), nullable=False),
         sa.Column('bank_name', sa.String(200), nullable=True),
