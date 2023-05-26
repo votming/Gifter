@@ -13,7 +13,25 @@ class LocalizationView(BaseModelView, model=Localization):
     #form_columns = [User.id, User.login, User.password, User.role]
     #column_formatters_detail = formatters
     #column_formatters = formatters
-
+    hints = {'variable': [
+        'offer_name',
+        'offer_hero',
+        'tv_show_name',
+        'currency_symbol',
+        'central_bank',
+        'offer_hero_first_name',
+        'offer_hero_second_name',
+        'country_demonym_capitalized',
+        'country_demonym_plural_capitalized',
+        'demonym',
+        'demonym_plural',
+        'currency_official_name',
+        'currency_name_capitalized',
+        'currency_name',
+        'currency_name_plural',
+        'min_dep_amount',
+        'money_value',
+    ]}
     def is_visible(self, request) -> bool:
         return request.scope['session']['role'] == 'admin'
 

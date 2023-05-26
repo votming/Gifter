@@ -18,6 +18,24 @@ class TitleView(BaseModelView, model=Title):
     column_sortable_list = [Title.id, Title.template, Title.gender, Title.language_id, Title.country_id]
     column_formatters = formatters
     column_formatters_detail = formatters
-
+    hints = {'template': [
+        '{offer_name}',
+        '{offer_hero}',
+        '{tv_show_name}',
+        '{currency_symbol}',
+        '{central_bank}',
+        '{offer_hero_first_name}',
+        '{offer_hero_second_name}',
+        '{country_demonym_capitalized}',
+        '{country_demonym_plural_capitalized}',
+        '{demonym}',
+        '{demonym_plural}',
+        '{currency_official_name}',
+        '{currency_name_capitalized}',
+        '{currency_name}',
+        '{currency_name_plural}',
+        '{min_dep_amount}',
+        '{money_value}',
+    ]}
     def can_be_deleted(self, obj=None) -> bool:
         return obj.created_at + datetime.timedelta(hours=1) > datetime.datetime.utcnow()
