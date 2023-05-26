@@ -19,6 +19,34 @@
               {{ field(class_="form-control is-invalid") }}
               {% else %}
               {{ field() }}
+                  {% if field.name == 'template' %}
+                      <div class="my-2">
+                        <button onclick="addToTextField(event, '{offer_name}', '{{ field.name }}')">offer_name</button>
+                        <button onclick="addToTextField(event, '{offer_hero}', '{{ field.name }}')">offer_hero</button>
+                        <button onclick="addToTextField(event, '{tv_show_name}', '{{ field.name }}')">tv_show_name</button>
+                        <button onclick="addToTextField(event, '{currency_symbol}', '{{ field.name }}')">currency_symbol</button>
+                        <button onclick="addToTextField(event, '{central_bank}', '{{ field.name }}')">central_bank</button>
+                        <button onclick="addToTextField(event, '{offer_hero_first_name}', '{{ field.name }}')">offer_hero_first_name</button>
+                        <button onclick="addToTextField(event, '{offer_hero_second_name}', '{{ field.name }}')">offer_hero_second_name</button>
+                        <button onclick="addToTextField(event, '{country_demonym_capitalized}', '{{ field.name }}')">country_demonym_capitalized</button>
+                        <button onclick="addToTextField(event, '{country_demonym_plural_capitalized}', '{{ field.name }}')">country_demonym_plural_capitalized</button>
+                        <button onclick="addToTextField(event, '{demonym}', '{{ field.name }}')">demonym</button>
+                        <button onclick="addToTextField(event, '{demonym_plural}', '{{ field.name }}')">demonym_plural</button>
+                        <button onclick="addToTextField(event, '{currency_official_name}', '{{ field.name }}')">currency_official_name</button>
+                        <button onclick="addToTextField(event, '{currency_name_capitalized}', '{{ field.name }}')">currency_name_capitalized</button>
+                        <button onclick="addToTextField(event, '{currency_name}', '{{ field.name }}')">currency_name</button>
+                        <button onclick="addToTextField(event, '{currency_name_plural}', '{{ field.name }}')">currency_name_plural</button>
+                        <button onclick="addToTextField(event, '{min_dep_amount}', '{{ field.name }}')">min_dep_amount</button>
+                        <button onclick="addToTextField(event, '{money_value}', '{{ field.name }}')">money_value</button>
+                        <script>
+                        function addToTextField(event, text, _id) {
+                            event.preventDefault()
+                            var textField = document.getElementById(_id);
+                            textField.value += text + ' ';
+                        }
+                        </script>
+                      </div>
+                  {% endif %}
               {% endif %}
               {% for error in field.errors %}
               <div class="invalid-feedback">{{ error }}</div>

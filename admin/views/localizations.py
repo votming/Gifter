@@ -5,9 +5,9 @@ from app.modules.models import User
 #formatters = {Localization.role: lambda m, a: m.role.name}
 
 class LocalizationView(BaseModelView, model=Localization):
-    #icon = 'fa-solid fa-user'
+    icon = 'fa-solid fa-globe'
     column_list = [Localization.id, Localization.variable, Localization.value, Localization.language, Localization.country]
-    #column_details_list = [User.id, User.login, User.role]
+    column_details_list = [Localization.id, Localization.language, Localization.country, Localization.variable, Localization.value]
     column_searchable_list = [Localization.variable]
     #column_sortable_list = [User.id, User.login, User.role_id]
     #form_columns = [User.id, User.login, User.password, User.role]

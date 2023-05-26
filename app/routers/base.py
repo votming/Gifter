@@ -67,7 +67,7 @@ def get_title(
                 if currency is None and title.country is not None and title.country.currency is not None:
                     currency = title.country.currency
                 demonym = title.country.demonym if title.country is not None else 'people'
-                params = gather_template_variables(money_values=money_values, macros=macros, offer_name=offer_name, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name, country_demonym_capitalized=demonym, currency=currency, languag=language, country=country)
+                params = gather_template_variables(money_values=money_values, macros=macros, offer_name=offer_name, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name, country_demonym_capitalized=demonym, currency=currency, language=language, country=country)
                 print(template)
                 print(params)
                 text = template.format(**params)
@@ -79,7 +79,7 @@ def get_title(
             if paragraph is not None:
                 template, money_values = parse_money_values(template)
                 bank_name = paragraph.country.bank_name if paragraph.country is not None else 'Bank'
-                params = gather_template_variables(money_values=money_values, macros=macros, bank_name=bank_name, tv_show_name=tv_show, currency=currency, languag=language, country=country, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name)
+                params = gather_template_variables(money_values=money_values, macros=macros, bank_name=bank_name, tv_show_name=tv_show, currency=currency, language=language, country=country, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name)
                 text = template.format(**params)
                 response['paragraph'] = text
 

@@ -36,15 +36,32 @@ def gather_template_variables(money_values: dict, macros: dict, language: Langua
     for key in money_values:
         if currency is not None:
             value = round(money_values[key] * (currency.exchange_rate or 1))
-            if value > 100:
-                rounded = int(str(value)[:2]) + 1
-                value = int(str(rounded) + '0' * (len(str(value)) - 2))
-            money_values[key] = f'{value:,}'.replace(',', currency.divider or '')
+            money_values[key] = convert_money_value(value, (country.divider or '') if country is not None else '')
+            # value = round(money_values[key] * (currency.exchange_rate or 1))
+            # if value > 100:
+            #     rounded = int(str(value)[:2])
+            #     value = int(str(rounded) + '0' * (len(str(value)) - 2))
+            # money_values[key] = f'{value:,}'.replace(',', currency.divider or '')
     localizations = dict()
     if language and country:
         localizations = {obj.variable: obj.value for obj in next(get_db()).query(Localization).filter(Localization.language_id == language.id, Localization.country_id == country.id).all()}
+        print(f'LOCALIZTIONS: {localizations}')
+    else:
+        print(f'lang: {language}, country: {country}')
     output = params | localizations | macros
     print(f'CURRENCY IS {currency}')
     if currency is not None:
-        output['money_value'] = f"{output['money_value']:,}".replace(',', currency.divider or '')
+        output['money_value'] = f"{output['money_value']:,}".replace(',', (country.divider or '') if country is not None else  '')
     return params | localizations | money_values | macros  # {**params, **raw_data}
+
+
+def convert_money_value(value, divider):
+    if not isinstance(value, int):
+        return value
+    leading_part = int(str(value)[:3])
+    rounding_part = float(f'0.{str(value)[3:]}')
+    print(leading_part, rounding_part, round(rounding_part))
+    if rounding_part < round(rounding_part):
+        leading_part += 1
+    value = int(str(leading_part) + '0' * (len(str(value)) - 3))
+    return f'{value:,}'.replace(',', divider or '_')

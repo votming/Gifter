@@ -45,20 +45,21 @@ class Currency(DBOperationsMixin, Base):
     min_dep_amount = Column('min_dep_amount', String)
     code = Column('code', String(5))
     symbol = Column('symbol', String(5))
-    divider = Column('divider', String(3), default='')
     exchange_rate = Column('exchange_rate', Float, default=1)
     created_at = Column(DateTime(timezone=False), server_default=func.now())
     updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, name='default', name_plural='default', official_name='default', code=None, symbol=None, min_dep_amount=None, divider='', exchange_rate=1):
+    def __init__(self, name='default', name_plural='default', official_name='default', code=None, symbol=None, min_dep_amount=None, exchange_rate=1):
         self.official_name = official_name
         self.name = name
         self.name_plural = name_plural
         self.code = code
         self.symbol = symbol
-        self.divider = divider
         self.exchange_rate = exchange_rate
         self.min_dep_amount = min_dep_amount or '0'
+
+    def __repr__(self):
+        return f'[{self.__class__.__name__}: {self.code}]'
 
 
 class Country(DBOperationsMixin, Base):
@@ -70,18 +71,21 @@ class Country(DBOperationsMixin, Base):
     demonym = Column('demonym', String)
     demonym_plural = Column('demonym_plural', String)
     bank_name = Column('bank_name', String)
+    divider = Column('divider', String(3), default='')
     currency_id = Column('currency_id', Integer, ForeignKey("currencies.id"))
     currency = relationship("Currency", backref="countries")
+    localizations = relationship('Localization', back_populates='country')
     created_at = Column(DateTime(timezone=False), server_default=func.now())
     updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, name='', code='__', demonym='', demonym_plural='', bank_name='', currency_id=None):
+    def __init__(self, name='', code='__', demonym='', demonym_plural='', bank_name='', currency_id=None, divider=''):
         self.name = name
         self.code = code
         self.demonym = demonym
         self.demonym_plural = demonym_plural
         self.bank_name = bank_name
         self.currency_id = currency_id
+        self.divider = divider
 
 
 class Language(DBOperationsMixin, Base):
@@ -146,13 +150,16 @@ class Localization(DBOperationsMixin, Base):
     country_id = Column('country_id', Integer, ForeignKey("countries.id"))
     variable = Column('variable', String(100))
     value = Column('value', String(200))
-    language = relationship("Language", backref="localizations")
-    country = relationship("Country", backref="localizations")
+    language = relationship("Language", backref="localizations_language", lazy='subquery', )
+    country = relationship("Country", back_populates="localizations")
     created_at = Column(DateTime(timezone=False), server_default=func.now())
     updated_at = Column(DateTime(timezone=False), onupdate=func.now())
 
-    def __init__(self, language_id, country_id, variable, value):
+    def __init__(self, language_id=None, country_id=None, variable='', value=''):
         self.language_id = language_id
         self.country_id = country_id
         self.variable = variable
         self.value = value
+
+    def __repr__(self):
+        return f'[{self.language.code}: {self.variable}]'

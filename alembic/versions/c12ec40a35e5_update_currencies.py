@@ -17,11 +17,11 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('currencies', sa.Column('divider', sa.String(3), default=''))
+    op.add_column('countries', sa.Column('divider', sa.String(3), default=''))
     op.add_column('currencies', sa.Column('exchange_rate', sa.Float, default=1))
     pass
 
 
 def downgrade() -> None:
     op.drop_column('currencies', 'exchange_rate')
-    op.drop_column('currencies', 'divider')
+    op.drop_column('countries', 'divider')
