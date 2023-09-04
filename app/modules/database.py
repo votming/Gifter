@@ -6,7 +6,7 @@ from app.configuration import Config
 
 # Declaration on the DB instance
 Base = declarative_base()
-engine = create_engine(Config.DB_CONNECT_PATH)
+engine = create_engine(Config.DB_CONNECT_PATH, pool_size=20, max_overflow=0)
 Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
