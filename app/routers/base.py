@@ -1,6 +1,7 @@
 import json
 import re
 import traceback
+import logging
 
 from fastapi import APIRouter
 from fastapi import Depends
@@ -16,6 +17,7 @@ from app.modules.models import Title
 from app.modules.database import get_db
 from app.utils.helpers import gather_template_variables
 
+logger = logging.getLogger(__name__)
 router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
@@ -44,7 +46,7 @@ def get_title(
             macros = dict()
     else:
         macros = dict()
-    print(macros)
+    logger.info(macros)
     try:
         response = {}
         #offer_name = f'{offer_hero_first_name} {offer_hero_second_name}'
@@ -53,7 +55,7 @@ def get_title(
             country = Country.filter(code=country_code)
         currency_code = currency
         if currency_code is not None:
-            print(currency_code)
+            logger.info(currency_code)
             currency = Currency.filter(code=currency_code)
         language_code = language
         if language_code is not None:
@@ -68,8 +70,8 @@ def get_title(
                     currency = title.country.currency
                 demonym = title.country.demonym if title.country is not None else 'people'
                 params = gather_template_variables(money_values=money_values, macros=macros, offer_name=offer_name, offer_hero_first_name=offer_hero_first_name, offer_hero_second_name=offer_hero_second_name, country_demonym_capitalized=demonym, currency=currency, language=language, country=country)
-                print(template)
-                print(params)
+                logger.info(template)
+                logger.info(params)
                 text = template.format(**params)
                 response['title'] = text
 

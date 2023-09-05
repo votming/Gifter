@@ -31,9 +31,12 @@ def get_db():
             return user
         ```
     """
-    db = Session()
+    db = session
+    print('start DB')
     try:
         yield db
     finally:
-        db.close()
+        pass
+        # print('CLOSE DB')
+        # db.close()
         

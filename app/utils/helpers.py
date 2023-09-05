@@ -1,8 +1,11 @@
+import logging
 from app.modules.database import get_db
 from app.modules.models import Country
 from app.modules.models import Currency
 from app.modules.models import Language
 from app.modules.models import Localization
+
+logger = logging.getLogger(__name__)
 
 
 def gather_template_variables(money_values: dict, macros: dict, language: Language = None, country: Country = None, currency: Currency = None, **kwargs):
@@ -45,11 +48,11 @@ def gather_template_variables(money_values: dict, macros: dict, language: Langua
     localizations = dict()
     if language and country:
         localizations = {obj.variable: obj.value for obj in next(get_db()).query(Localization).filter(Localization.language_id == language.id, Localization.country_id == country.id).all()}
-        print(f'LOCALIZTIONS: {localizations}')
+        logger.info(f'LOCALIZTIONS: {localizations}')
     else:
-        print(f'lang: {language}, country: {country}')
+        logger.info(f'lang: {language}, country: {country}')
     output = params | localizations | macros
-    print(f'CURRENCY IS {currency}')
+    logger.info(f'CURRENCY IS {currency}')
     if currency is not None:
         output['money_value'] = f"{output['money_value']:,}".replace(',', (country.divider or '') if country is not None else  '')
     return params | localizations | money_values | macros  # {**params, **raw_data}
@@ -60,7 +63,7 @@ def convert_money_value(value, divider):
         return value
     leading_part = int(str(value)[:3])
     rounding_part = float(f'0.{str(value)[3:]}')
-    print(leading_part, rounding_part, round(rounding_part))
+    logger.info(leading_part, rounding_part, round(rounding_part))
     if rounding_part < round(rounding_part):
         leading_part += 1
     value = int(str(leading_part) + '0' * (len(str(value)) - 3))

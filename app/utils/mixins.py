@@ -1,5 +1,8 @@
 from app.modules.database import session
 from sqlalchemy import exc
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DBOperationsMixin:
@@ -80,7 +83,7 @@ class DBOperationsMixin:
         """
         for key in kwargs.keys():
             setattr(self, key, kwargs.get(key))
-            print(f'[{self}] New `{key}` value is: {getattr(self, key)}')
+            logger.info(f'[{self}] New `{key}` value is: {getattr(self, key)}')
         session.add(self)
         session.commit()
 
