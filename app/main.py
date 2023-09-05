@@ -11,6 +11,7 @@ from admin.views.titles import TitleView
 from app.modules.database import engine
 from app.routers import countries, languages, currencies, titles, base, paragraphs
 from sqladmin import Admin
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Setup logging
 logging.basicConfig(
@@ -34,6 +35,7 @@ app.include_router(currencies.router, prefix='/api/currencies', tags=["currencie
 app.include_router(titles.router, prefix='/api/titles', tags=["titles"])
 app.include_router(paragraphs.router, prefix='/api/paragraphs', tags=["paragraphs"])
 app.include_router(base.router, prefix='/api', tags=["base"])
+Instrumentator().instrument(app).expose(app)
 
 # Create frontend app, connect all frontend (SqlAdmin) views
 mount_admin_routes(app)
