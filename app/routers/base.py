@@ -2,6 +2,7 @@ import json
 import re
 import traceback
 import logging
+from fastapi import status, HTTPException
 
 from fastapi import APIRouter
 from fastapi import Depends
@@ -88,10 +89,13 @@ def get_title(
         return response
     except Exception as ex:
         tb = traceback.format_exc()
-        return {
-            'error': str(ex),
-            'traceback': tb
-        }
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail={
+                'error': str(ex),
+                'traceback': tb
+            },
+        )
 
 
 def parse_money_values(template:str):
