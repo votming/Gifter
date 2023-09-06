@@ -6,7 +6,7 @@ from sqlalchemy.orm import (
     joinedload,
 )
 from sqlalchemy.sql.expression import Select, select
-from sqlalchemy import Column, String, asc, cast, desc, func, inspect, or_
+from sqlalchemy import Column, String, asc, cast, desc, func, inspect, or_, and_
 from admin.views.base import BaseModelView
 from app.modules.models import Country
 from app.modules.models import Title, Language
@@ -81,8 +81,8 @@ class TitleView(BaseModelView, model=Title):
         all_query = stmt.limit(None).offset(None)
         stmt = stmt.order_by(None).order_by(asc(Title.id))
         if search:
-            stmt = self.search_query(stmt=stmt, term=search)
-            all_query = self.search_query(stmt=stmt.limit(None).offset(None), term=search)
+            stmt = self.search_query(stmt=stmt, search=search)
+            all_query = self.search_query(stmt=stmt.limit(None).offset(None), search=search)
 
         rows = await self._run_query(stmt)
         all_rows = (await self._run_query(all_query))
@@ -96,13 +96,22 @@ class TitleView(BaseModelView, model=Title):
 
         return pagination
 
-    def search_query(self, stmt: Select, term: str) -> Select:
-        expressions = [
-            cast(Title.template, String).ilike(f"%{term}%"),
-            cast(Language.name, String).ilike(f"%{term}%"),
-            cast(Country.name, String).ilike(f"%{term}%"),
-            #cast(prop, String).ilike(f"%{term}%") for prop in self.column_searchable_list
-        ]
-        if term in {'male', 'female'}:
-            expressions.append(or_(Title.gender == term, Title.gender == None))
-        return stmt.filter(or_(*expressions))
+    def search_query(self, stmt: Select, search: str) -> Select:
+        templates = list()
+        languages = list()
+        countries = list()
+        genders = list()
+        for word in search.split(' '):
+            if word in {'male', 'female'}:
+                genders.append(or_(Title.gender == word, Title.gender == None))
+            else:
+                templates.append(cast(Title.template, String).ilike(f"%{word}%"))
+                languages.append(cast(Language.name, String).ilike(f"%{word}%"))
+                countries.append(cast(Country.name, String).ilike(f"%{word}%"))
+        # expressions = [
+        #     cast(Title.template, String).ilike(f"%{term}%"),
+        #     cast(Language.name, String).ilike(f"%{term}%"),
+        #     cast(Country.name, String).ilike(f"%{term}%"),
+        #     #cast(prop, String).ilike(f"%{term}%") for prop in self.column_searchable_list
+        # ]
+        return stmt.filter(and_(or_(or_(*templates), or_(*languages), or_(*countries)), or_(*genders)))
