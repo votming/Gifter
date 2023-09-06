@@ -5,7 +5,7 @@ from typing import (
 from sqlalchemy.orm import (
     joinedload,
 )
-from sqlalchemy.sql.expression import Select
+from sqlalchemy.sql.expression import Select, select
 from sqlalchemy import Column, String, asc, cast, desc, func, inspect, or_
 from admin.views.base import BaseModelView
 from app.modules.models import Country
@@ -78,15 +78,20 @@ class TitleView(BaseModelView, model=Title):
             else:
                 stmt = stmt.order_by(asc(sort_field))
 
+        all_query = stmt.limit(None).offset(None)
+        stmt = stmt.order_by(None).order_by(asc(Title.id))
         if search:
             stmt = self.search_query(stmt=stmt, term=search)
+            all_query = self.search_query(stmt=stmt.limit(None).offset(None), term=search)
 
         rows = await self._run_query(stmt)
+        all_rows = (await self._run_query(all_query))
+        count = len(all_rows)
         pagination = Pagination(
             rows=rows,
             page=page,
             page_size=page_size,
-            count=len(rows),
+            count=count,
         )
 
         return pagination
