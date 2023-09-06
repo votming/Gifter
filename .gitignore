@@ -5,6 +5,8 @@ __pycache__/
 *.db
 .env
 .idea/
+logs/*
+*.log
 
 
 # C extensions
