@@ -102,6 +102,8 @@ class TitleView(BaseModelView, model=Title):
         countries = list()
         genders = list()
         for word in search.split(' '):
+            if word == '':
+                continue
             if word in {'male', 'female'}:
                 genders.append(or_(Title.gender == word, Title.gender == None))
             else:
