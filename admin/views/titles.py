@@ -109,7 +109,7 @@ class TitleView(BaseModelView, model=Title):
             else:
                 templates.append(cast(Title.template, String).ilike(f"%{word}%"))
                 languages.append(cast(Language.name, String).ilike(f"%{word}%"))
-                countries.append(cast(Country.name, String).ilike(f"%{word}%"))
+                countries.append(or_(cast(Country.name, String).ilike(f"%{word}%"), Country.name == None))
         # expressions = [
         #     cast(Title.template, String).ilike(f"%{term}%"),
         #     cast(Language.name, String).ilike(f"%{term}%"),
