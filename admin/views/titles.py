@@ -25,7 +25,7 @@ class TitleView(BaseModelView, model=Title):
                    Title.country_id]
     #column_searchable_list = [Title.template, Title.gender, Title.language, Title.country]
     #column_searchable_list = [Title.template, Title.gender, Language.name, Country.name]
-    column_searchable_list = [Title.template, Title.gender, Language.name, Country.name]
+    column_searchable_list = [Title.template, Title.gender, Title.language, Title.country]
     column_sortable_list = [Title.id, Title.template, Title.gender, Title.language_id, Title.country_id]
     column_formatters = formatters
     column_formatters_detail = formatters
