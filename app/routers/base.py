@@ -53,14 +53,14 @@ def get_title(
         #offer_name = f'{offer_hero_first_name} {offer_hero_second_name}'
         country_code = country
         if country_code is not None:
-            country = Country.filter(code=country_code)
+            country = Country.filter(code=country_code, raise_exception=False)
         currency_code = currency
         if currency_code is not None:
             logger.info(currency_code)
-            currency = Currency.filter(code=currency_code)
+            currency = Currency.filter(code=currency_code, raise_exception=False)
         language_code = language
         if language_code is not None:
-            language = Language.filter(code=language_code)
+            language = Language.filter(code=language_code, raise_exception=False)
 
         if titles is not None:
             title: Title = generate(db, Title, titles, country_code, language_code, gender)

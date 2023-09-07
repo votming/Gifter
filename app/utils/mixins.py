@@ -27,13 +27,14 @@ class DBOperationsMixin:
         raise exc.NoResultFound(f'{cls} not found')
 
     @classmethod
-    def filter(cls, **filters):
+    def filter(cls, raise_exception=True, **filters):
         query = session.query(cls)
         query = query.filter_by(**filters)
         instance = query.first()
         if instance:
             return instance
-        raise exc.NoResultFound(f'Instance of the class {cls.__name__} not found')
+        if raise_exception:
+            raise exc.NoResultFound(f'Instance of the class {cls.__name__} not found')
 
     @classmethod
     def create(cls, **kwargs):
