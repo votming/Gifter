@@ -6,6 +6,7 @@ Create Date: 2023-05-09 14:34:30.671555
 
 """
 import os
+import logging
 
 from alembic import op
 import sqlalchemy as sa
@@ -19,6 +20,8 @@ from app.modules.models import Paragraph
 from app.modules.models import Role
 from app.modules.models import Title
 from app.modules.models import User
+
+logger = logging.getLogger(__name__)
 
 # revision identifiers, used by Alembic.
 revision = '2551a44be75b'
@@ -34,6 +37,7 @@ def create_objects(objects, model):
     session.commit()
 
 def upgrade() -> None:
+    logger.info('CREATE TABLES')
     op.create_table(
         'user_roles',
         sa.Column('id', sa.Integer, primary_key=True),
@@ -122,6 +126,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(('language_id',), ['languages.id'], ),
         sa.ForeignKeyConstraint(('country_id',), ['countries.id'], ),
     )
+    logger.info('TABLES CREATED')
     session.commit()
     roles = [{'name': 'admin'}, {'name': 'user'}]
     create_objects(roles, Role)
