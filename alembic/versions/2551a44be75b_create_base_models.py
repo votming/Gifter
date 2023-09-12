@@ -122,6 +122,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(('language_id',), ['languages.id'], ),
         sa.ForeignKeyConstraint(('country_id',), ['countries.id'], ),
     )
+    session.commit()
     roles = [{'name': 'admin'}, {'name': 'user'}]
     create_objects(roles, Role)
     chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
