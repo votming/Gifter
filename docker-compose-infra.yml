@@ -1,15 +1,6 @@
-# docker-compose.yml
-
 version: '3.3'
 
 services:
-  web:
-    build: .
-    command: bash -c "python -m alembic upgrade head && uvicorn app.main:app --host 0.0.0.0"
-    volumes:
-      - .:/app
-    ports:
-      - 8008:8000
   db:
     image: postgres:14.1-alpine
     restart: always
