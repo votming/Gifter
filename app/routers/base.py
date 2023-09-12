@@ -17,6 +17,7 @@ from app.modules.models import Title
 
 from app.modules.database import get_db
 from app.utils.helpers import gather_template_variables
+from app.utils.helpers import get_cached_instance
 
 logger = logging.getLogger(__name__)
 router = APIRouter(
@@ -53,14 +54,14 @@ def get_title(
         #offer_name = f'{offer_hero_first_name} {offer_hero_second_name}'
         country_code = country
         if country_code is not None:
-            country = Country.filter(code=country_code, raise_exception=False)
+            country = get_cached_instance(Country, code=country_code)
         currency_code = currency
         if currency_code is not None:
             logger.info(currency_code)
-            currency = Currency.filter(code=currency_code, raise_exception=False)
+            currency = get_cached_instance(Currency, code=currency_code)
         language_code = language
         if language_code is not None:
-            language = Language.filter(code=language_code, raise_exception=False)
+            language = get_cached_instance(Language, code=language_code)
 
         if titles is not None:
             title: Title = generate(db, Title, titles, country_code, language_code, gender)

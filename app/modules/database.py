@@ -12,7 +12,7 @@ engine = create_engine(Config.DB_CONNECT_PATH, pool_size=100, max_overflow=10)
 Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, password=Config.REDIS_PASSWORD)
 
 
 def get_db():

@@ -1,5 +1,8 @@
 import logging
+import pickle
+
 from app.modules.database import get_db
+from app.modules.database import redis_client
 from app.modules.models import Country
 from app.modules.models import Currency
 from app.modules.models import Language
@@ -68,3 +71,14 @@ def convert_money_value(value, divider):
         leading_part += 1
     value = int(str(leading_part) + '0' * (len(str(value)) - 3))
     return f'{value:,}'.replace(',', divider or '_')
+
+
+def get_cached_instance(model, **filters):
+    key = f'{model.__class__.__name__}_{filters=}'
+    cache = redis_client.get(key)
+    instance = pickle.loads(cache) if cache else None
+    if instance is None:
+        instance = model.filter(**filters, raise_exception=False)
+        redis_client.set(key, pickle.dumps(instance))
+        redis_client.expire(key, 60)
+    return instance
