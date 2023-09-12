@@ -37,7 +37,7 @@ def create_objects(objects, model):
     session.commit()
 
 def upgrade() -> None:
-    logger.info('CREATE TABLES')
+    logger.error('CREATE TABLES')
     op.create_table(
         'user_roles',
         sa.Column('id', sa.Integer, primary_key=True),
@@ -126,7 +126,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(('language_id',), ['languages.id'], ),
         sa.ForeignKeyConstraint(('country_id',), ['countries.id'], ),
     )
-    logger.info('TABLES CREATED')
+    logger.error('TABLES CREATED')
     session.commit()
     roles = [{'name': 'admin'}, {'name': 'user'}]
     create_objects(roles, Role)
