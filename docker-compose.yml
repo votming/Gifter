@@ -3,6 +3,16 @@
 version: '3.3'
 
 services:
+  web:
+    build: .
+    command: bash -c "python -m alembic upgrade head && uvicorn app.main:app --host 0.0.0.0"
+    depends_on:
+      - db
+      - cache
+    volumes:
+      - .:/app
+    ports:
+      - 8008:8000
   db:
     image: postgres:14.1-alpine
     restart: always
@@ -21,13 +31,6 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - cache:/data
-  web:
-    build: .
-    command: bash -c "python -m alembic upgrade head && uvicorn app.main:app --host 0.0.0.0"
-    volumes:
-      - .:/app
-    ports:
-      - 8008:8000
 volumes:
   cache:
     driver: local
