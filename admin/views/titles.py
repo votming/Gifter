@@ -104,11 +104,14 @@ class TitleView(BaseModelView, model=Title):
             searchable_list = [Title.template, Title.gender, Language.name, Country.name]
             expressions = []
             for key, value in fields.items():
-                field = next(iter([field for field in searchable_list if (field.key == key or field.property.class_attribute.class_.__name__.lower() == key)]))
                 if key == 'template':
-                    expressions.append(cast(field, String).ilike(f"%{value}%"))
-                else:
-                    expressions.append(cast(field, String).ilike(f"{value}"))
+                    expressions.append(cast(Title.template, String).ilike(f"%{value}%"))
+                elif key == 'gender':
+                    expressions.append(or_(Title.gender == value, Title.gender == None))
+                elif key == 'language':
+                    expressions.append(cast(Language.name, String).ilike(f"%{value}%"))
+                elif key == 'country':
+                    expressions.append(or_(cast(Country.name, String).ilike(f"%{value}%"), Country.name == None))
             return stmt.filter(and_(*expressions))
         except Exception:
             templates = list()
