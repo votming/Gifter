@@ -6,4 +6,3 @@ load_dotenv(find_dotenv())
 
 class Config:
     DB_CONNECT_PATH = os.environ.get("DB_CONNECT_PATH")
-    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")

@@ -1,5 +1,3 @@
-import redis
-import pickle
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -8,11 +6,10 @@ from app.configuration import Config
 
 # Declaration on the DB instance
 Base = declarative_base()
-engine = create_engine(Config.DB_CONNECT_PATH, pool_size=100, max_overflow=10)
+engine = create_engine(Config.DB_CONNECT_PATH, pool_size=20, max_overflow=0)
 Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, password=Config.REDIS_PASSWORD)
 
 
 def get_db():
