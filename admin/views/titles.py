@@ -1,4 +1,5 @@
 import datetime
+import json
 from typing import (
     Optional,
 )
@@ -20,6 +21,7 @@ formatters = {
 
 
 class TitleView(BaseModelView, model=Title):
+    list_template = "titles_list.html"
     icon = 'fa-solid fa-comment'
     column_list = [Title.id, Title.template, Title.gender, Title.language, Title.language_id, Title.country,
                    Title.country_id]
@@ -97,23 +99,30 @@ class TitleView(BaseModelView, model=Title):
         return pagination
 
     def search_query(self, stmt: Select, search: str) -> Select:
-        templates = list()
-        languages = list()
-        countries = list()
-        genders = list()
-        for word in search.split(' '):
-            if word == '':
-                continue
-            if word in {'male', 'female'}:
-                genders.append(or_(Title.gender == word, Title.gender == None))
-            else:
-                templates.append(cast(Title.template, String).ilike(f"%{word}%"))
-                languages.append(cast(Language.name, String).ilike(f"%{word}%"))
-                countries.append(or_(cast(Country.name, String).ilike(f"%{word}%"), Country.name == None))
-        # expressions = [
-        #     cast(Title.template, String).ilike(f"%{term}%"),
-        #     cast(Language.name, String).ilike(f"%{term}%"),
-        #     cast(Country.name, String).ilike(f"%{term}%"),
-        #     #cast(prop, String).ilike(f"%{term}%") for prop in self.column_searchable_list
-        # ]
-        return stmt.filter(and_(or_(or_(*templates), or_(*languages), or_(*countries)), or_(*genders)))
+        try:
+            fields = json.loads(search)
+            searchable_list = [Title.template, Title.gender, Language.name, Country.name]
+            expressions = []
+            for key, value in fields.items():
+                field = next(iter([field for field in searchable_list if (field.key == key or field.property.class_attribute.class_.__name__.lower() == key)]))
+                if key == 'template':
+                    expressions.append(cast(field, String).ilike(f"%{value}%"))
+                else:
+                    expressions.append(cast(field, String).ilike(f"{value}"))
+            return stmt.filter(and_(*expressions))
+        except Exception:
+            templates = list()
+            languages = list()
+            countries = list()
+            genders = list()
+            for word in search.split(' '):
+                if word == '':
+                    continue
+                if word in {'male', 'female'}:
+                    genders.append(or_(Title.gender == word, Title.gender == None))
+                else:
+                    templates.append(cast(Title.template, String).ilike(f"%{word}%"))
+                    languages.append(cast(Language.name, String).ilike(f"%{word}%"))
+                    countries.append(or_(cast(Country.name, String).ilike(f"%{word}%"), Country.name == None))
+            return stmt.filter(and_(or_(or_(*templates), or_(*languages), or_(*countries)), or_(*genders)))
+
