@@ -128,4 +128,3 @@ class TitleView(BaseModelView, model=Title):
                     languages.append(cast(Language.name, String).ilike(f"%{word}%"))
                     countries.append(or_(cast(Country.name, String).ilike(f"%{word}%"), Country.name == None))
             return stmt.filter(and_(or_(or_(*templates), or_(*languages), or_(*countries)), or_(*genders)))
-
